@@ -3,7 +3,7 @@ package config
 import (
 	"flag"
 
-	"gatom/log"
+	"github.com/872409/gatom/log"
 )
 
 func Usage(appName string, appVersion string, appDesc string) {

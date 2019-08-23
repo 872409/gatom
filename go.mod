@@ -1,4 +1,4 @@
-module gatom
+module github.com/872409/gatom
 
 go 1.12
 
