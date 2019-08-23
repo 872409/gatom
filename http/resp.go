@@ -6,18 +6,34 @@ import (
 	"github.com/872409/gatom"
 )
 
+type GenJSONHandleFun func(code int, msg string, data interface{}) interface{}
+
+var (
+	hasGenJSONHandle = false
+	genJSONHandle    GenJSONHandleFun
+
+	JSONCodeName = "code"
+	JSONMsgName  = "msg"
+	JSONDataName = "data"
+)
+
+func SetGenJSONHandler(fun GenJSONHandleFun) {
+	hasGenJSONHandle = true
+	genJSONHandle = fun
+}
+
 func GenJSON(code int, msg string, data interface{}) interface{} {
 
-	resp := gatom.JSON{
-		"code": code,
-		"msg":  msg,
+	json := gatom.JSON{
+		JSONCodeName: code,
+		JSONMsgName:  msg,
 	}
 
 	if data != nil {
-		resp["data"] = data
+		json[JSONDataName] = data
 	}
 
-	return resp
+	return json
 }
 
 func GenSuccessJSON(data interface{}, msg ...string) interface{} {
@@ -28,7 +44,13 @@ func GenSuccessJSON(data interface{}, msg ...string) interface{} {
 		_msg = "ok"
 	}
 
-	return GenJSON(1, _msg, data)
+	code := 1
+
+	if hasGenJSONHandle {
+		return genJSONHandle(code, _msg, data)
+	}
+
+	return GenJSON(code, _msg, data)
 }
 
 func GenErrorJSON(msg string, code int, data ...interface{}) interface{} {
@@ -36,6 +58,15 @@ func GenErrorJSON(msg string, code int, data ...interface{}) interface{} {
 	if len(data) > 0 {
 		_data = data[0]
 	}
+
+	if code > 0 {
+		code = -code
+	}
+
+	if hasGenJSONHandle {
+		return genJSONHandle(code, msg, _data)
+	}
+
 	return GenJSON(code, msg, _data)
 }
 
