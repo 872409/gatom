@@ -50,8 +50,8 @@ func New(name ...string) *Log {
 }
 
 type Log struct {
-	Name   string
-	Logger *logrus.Logger
+	*logrus.Logger
+	Name string
 }
 
 func (l *Log) SaveToFile(filePath ...string) *Log {
