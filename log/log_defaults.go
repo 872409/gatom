@@ -6,6 +6,13 @@ func Default() *Log {
 	return defaultLog
 }
 
+func SetLevel(level Level) {
+	defaultLog.SetLevel(level)
+}
+func SaveToFile(filePath ...string) {
+	defaultLog.SaveToFile(filePath...)
+}
+
 func SetDefault(l *Log) {
 	defaultLog = l
 }
