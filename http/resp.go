@@ -6,7 +6,7 @@ import (
 	"github.com/872409/gatom"
 )
 
-func GenRespJSON(code int, msg string, data interface{}) interface{} {
+func GenJSON(code int, msg string, data interface{}) interface{} {
 
 	resp := gatom.JSON{
 		"code": code,
@@ -20,7 +20,7 @@ func GenRespJSON(code int, msg string, data interface{}) interface{} {
 	return resp
 }
 
-func GenRespSuccessJSON(data interface{}, msg ...string) interface{} {
+func GenSuccessJSON(data interface{}, msg ...string) interface{} {
 	_msg := ""
 	if len(msg) > 0 {
 		_msg = msg[0]
@@ -28,30 +28,30 @@ func GenRespSuccessJSON(data interface{}, msg ...string) interface{} {
 		_msg = "ok"
 	}
 
-	return GenRespJSON(1, _msg, data)
+	return GenJSON(1, _msg, data)
 }
 
-func GenRespErrorJSON(msg string, code int, data ...interface{}) interface{} {
+func GenErrorJSON(msg string, code int, data ...interface{}) interface{} {
 	var _data interface{}
 	if len(data) > 0 {
 		_data = data[0]
 	}
-	return GenRespJSON(code, msg, _data)
+	return GenJSON(code, msg, _data)
 }
 
-func RespSuccess(c *gin.Context, data interface{}, msg ...string) {
-	out := GenRespSuccessJSON(data, msg...)
-	RespJSON(c, 200, out)
+func Success(c *gin.Context, data interface{}, msg ...string) {
+	out := GenSuccessJSON(data, msg...)
+	JSON(c, 200, out)
 }
 
-func RespError(c *gin.Context, msg string, data ...interface{}) {
-	RespJSON(c, 200, GenRespErrorJSON(msg, -1, data...))
+func Error(c *gin.Context, msg string, data ...interface{}) {
+	JSON(c, 200, GenErrorJSON(msg, -1, data...))
 }
 
-func RespErrorCode(c *gin.Context, msg string, code int, data ...interface{}) {
-	RespJSON(c, 200, GenRespErrorJSON(msg, code, data...))
+func ErrorCode(c *gin.Context, msg string, code int, data ...interface{}) {
+	JSON(c, 200, GenErrorJSON(msg, code, data...))
 }
 
-func RespJSON(c *gin.Context, code int, out interface{}) {
+func JSON(c *gin.Context, code int, out interface{}) {
 	c.JSON(code, out)
 }
