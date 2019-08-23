@@ -6,7 +6,7 @@ import (
 	"github.com/872409/gatom"
 )
 
-func genRespData(code int, msg string, data interface{}) interface{} {
+func GenRespData(code int, msg string, data interface{}) interface{} {
 
 	resp := gatom.JSON{
 		"code": code,
@@ -28,7 +28,7 @@ func GenRespSuccessData(data interface{}, msg ...string) interface{} {
 		_msg = "ok"
 	}
 
-	return genRespData(1, _msg, data)
+	return GenRespData(1, _msg, data)
 }
 
 func GenRespErrorData(msg string, code int, data ...interface{}) interface{} {
@@ -36,7 +36,7 @@ func GenRespErrorData(msg string, code int, data ...interface{}) interface{} {
 	if len(data) > 0 {
 		_data = data[0]
 	}
-	return genRespData(code, msg, _data)
+	return GenRespData(code, msg, _data)
 }
 
 func RespSuccess(c *gin.Context, data interface{}, msg ...string) {
