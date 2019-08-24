@@ -1,12 +1,14 @@
 package http
 
 import (
+	"reflect"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/872409/gatom"
 )
 
-type GenJSONHandleFun func(code int, msg string, data interface{}) interface{}
+type GenJSONHandleFun func(code int, msg string, data interface{}) gatom.JSON
 
 var (
 	hasGenJSONHandle = false
@@ -17,12 +19,23 @@ var (
 	JSONDataName = "data"
 )
 
-func SetGenJSONHandler(fun GenJSONHandleFun) {
-	hasGenJSONHandle = true
-	genJSONHandle = fun
+func SetGenJSONHandler(handle GenJSONHandleFun) {
+
+	if reflect.TypeOf(handle).Kind() == reflect.Func {
+		hasGenJSONHandle = true
+		genJSONHandle = handle
+	}
 }
 
-func GenJSON(code int, msg string, data interface{}) interface{} {
+func GenJSON(code int, msg string, data interface{}) gatom.JSON {
+
+	if hasGenJSONHandle {
+		json := genJSONHandle(code, msg, data)
+
+		if json != nil {
+			return json
+		}
+	}
 
 	json := gatom.JSON{
 		JSONCodeName: code,
@@ -36,18 +49,17 @@ func GenJSON(code int, msg string, data interface{}) interface{} {
 	return json
 }
 
-func GenSuccessJSON(data interface{}, msg ...string) interface{} {
-	_msg := ""
+func GenSuccessJSON(data interface{}, code int, msg ...string) interface{} {
+	var _msg = ""
+
 	if len(msg) > 0 {
 		_msg = msg[0]
 	} else {
 		_msg = "ok"
 	}
 
-	code := 1
-
-	if hasGenJSONHandle {
-		return genJSONHandle(code, _msg, data)
+	if code < 0 {
+		code = -code
 	}
 
 	return GenJSON(code, _msg, data)
@@ -55,6 +67,7 @@ func GenSuccessJSON(data interface{}, msg ...string) interface{} {
 
 func GenErrorJSON(msg string, code int, data ...interface{}) interface{} {
 	var _data interface{}
+
 	if len(data) > 0 {
 		_data = data[0]
 	}
@@ -63,26 +76,25 @@ func GenErrorJSON(msg string, code int, data ...interface{}) interface{} {
 		code = -code
 	}
 
-	if hasGenJSONHandle {
-		return genJSONHandle(code, msg, _data)
-	}
-
 	return GenJSON(code, msg, _data)
 }
 
 func Success(c *gin.Context, data interface{}, msg ...string) {
-	out := GenSuccessJSON(data, msg...)
-	JSON(c, 200, out)
+	SuccessCode(c, data, 1, msg...)
+}
+func SuccessCode(c *gin.Context, data interface{}, code int, msg ...string) {
+	out := GenSuccessJSON(data, code, msg...)
+	ginJSON(c, 200, out)
 }
 
 func Error(c *gin.Context, msg string, data ...interface{}) {
-	JSON(c, 200, GenErrorJSON(msg, -1, data...))
+	ginJSON(c, 200, GenErrorJSON(msg, -1, data...))
 }
 
 func ErrorCode(c *gin.Context, msg string, code int, data ...interface{}) {
-	JSON(c, 200, GenErrorJSON(msg, code, data...))
+	ginJSON(c, 200, GenErrorJSON(msg, code, data...))
 }
 
-func JSON(c *gin.Context, code int, out interface{}) {
+func ginJSON(c *gin.Context, code int, out interface{}) {
 	c.JSON(code, out)
 }
