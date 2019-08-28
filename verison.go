@@ -1,4 +1,4 @@
 package gatom
 
 // Version is the current gatom version.
-const Version = "v1.2.4"
+const Version = "v1.2.5"
