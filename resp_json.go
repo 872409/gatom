@@ -6,6 +6,7 @@ package gatom
 
 type JSONResponseHandler interface {
 	JSON(code int, obj interface{})
+	Abort()
 }
 
 func NewJSONResponse() *JSONResponse {
@@ -85,4 +86,5 @@ func (j *JSONResponse) ErrorCode(c JSONResponseHandler, msg string, code int, da
 
 func ginJSON(c JSONResponseHandler, code int, out interface{}) {
 	c.JSON(code, out)
+	c.Abort()
 }
