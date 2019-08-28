@@ -1,4 +1,4 @@
-package http
+package gatom
 
 import (
 	"testing"

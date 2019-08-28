@@ -1,8 +1,4 @@
-package http
-
-import (
-	"github.com/872409/gatom"
-)
+package gatom
 
 // type JsonRespHandle interface {
 // 	GenJSON(code int, msg string, data interface{}) gatom.JSON
@@ -28,8 +24,8 @@ type JSONResponse struct {
 	DataName string
 }
 
-func (j *JSONResponse) GenJSON(code int, msg string, data interface{}) gatom.JSON {
-	json := gatom.JSON{
+func (j *JSONResponse) GenJSON(code int, msg string, data interface{}) JSON {
+	json := JSON{
 		j.CodeName: code,
 		j.MsgName:  msg,
 	}
