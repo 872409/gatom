@@ -1,8 +1,6 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
-
 	"github.com/872409/gatom"
 )
 
@@ -10,23 +8,27 @@ import (
 // 	GenJSON(code int, msg string, data interface{}) gatom.JSON
 // }
 
-func New() *JsonResp {
+type JSONResponseHandler interface {
+	JSON(code int, obj interface{})
+}
 
-	return &JsonResp{
+func NewJSONResponse() *JSONResponse {
+
+	return &JSONResponse{
 		CodeName: "code",
 		MsgName:  "msg",
 		DataName: "data",
 	}
 }
 
-type JsonResp struct {
+type JSONResponse struct {
 	// JsonRespHandle JsonRespHandle
 	CodeName string
 	MsgName  string
 	DataName string
 }
 
-func (j *JsonResp) GenJSON(code int, msg string, data interface{}) gatom.JSON {
+func (j *JSONResponse) GenJSON(code int, msg string, data interface{}) gatom.JSON {
 	json := gatom.JSON{
 		j.CodeName: code,
 		j.MsgName:  msg,
@@ -39,7 +41,7 @@ func (j *JsonResp) GenJSON(code int, msg string, data interface{}) gatom.JSON {
 	return json
 }
 
-func (j *JsonResp) genSuccessJSON(data interface{}, code int, msg ...string) interface{} {
+func (j *JSONResponse) genSuccessJSON(data interface{}, code int, msg ...string) interface{} {
 	var _msg = ""
 
 	if len(msg) > 0 {
@@ -55,7 +57,7 @@ func (j *JsonResp) genSuccessJSON(data interface{}, code int, msg ...string) int
 	return j.GenJSON(code, _msg, data)
 }
 
-func (j *JsonResp) genErrorJSON(msg string, code int, data ...interface{}) interface{} {
+func (j *JSONResponse) genErrorJSON(msg string, code int, data ...interface{}) interface{} {
 	var _data interface{}
 
 	if len(data) > 0 {
@@ -69,22 +71,22 @@ func (j *JsonResp) genErrorJSON(msg string, code int, data ...interface{}) inter
 	return j.GenJSON(code, msg, _data)
 }
 
-func (j *JsonResp) Success(c *gin.Context, data interface{}, msg ...string) {
+func (j *JSONResponse) Success(c JSONResponseHandler, data interface{}, msg ...string) {
 	j.SuccessCode(c, data, 1, msg...)
 }
 
-func (j *JsonResp) SuccessCode(c *gin.Context, data interface{}, code int, msg ...string) {
+func (j *JSONResponse) SuccessCode(c JSONResponseHandler, data interface{}, code int, msg ...string) {
 	ginJSON(c, 200, j.genSuccessJSON(data, code, msg...))
 }
 
-func (j *JsonResp) Error(c *gin.Context, msg string, data ...interface{}) {
+func (j *JSONResponse) Error(c JSONResponseHandler, msg string, data ...interface{}) {
 	ginJSON(c, 200, j.genErrorJSON(msg, -1, data...))
 }
 
-func (j *JsonResp) ErrorCode(c *gin.Context, msg string, code int, data ...interface{}) {
+func (j *JSONResponse) ErrorCode(c JSONResponseHandler, msg string, code int, data ...interface{}) {
 	ginJSON(c, 200, j.genErrorJSON(msg, code, data...))
 }
 
-func ginJSON(c *gin.Context, code int, out interface{}) {
+func ginJSON(c JSONResponseHandler, code int, out interface{}) {
 	c.JSON(code, out)
 }
