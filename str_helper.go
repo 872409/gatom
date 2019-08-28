@@ -56,3 +56,12 @@ func StrToBool(value string, def ...bool) bool {
 
 	return StrTo(value, _def).(bool)
 }
+
+func StrInArray(array []string, value string) (bool, int) {
+	for i, a := range array {
+		if a == value {
+			return true, i
+		}
+	}
+	return false, -1
+}
