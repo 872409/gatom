@@ -1,33 +1,58 @@
 package gatom
 
-import "strconv"
+import (
+	"strconv"
+)
 
-func StrToInt(value string, def ...int) (val int) {
+func StrTo(value string, def interface{}) (val interface{}) {
 
 	if value == "" {
-		if len(def) > 0 {
-			return def[0]
-		}
-
-		val = 0
+		val = def
 		return
 	}
 
-	val, _ = strconv.Atoi(value)
+	var (
+		_val interface{}
+		err  error
+	)
+
+	switch def.(type) {
+	case int:
+		_val, err = strconv.Atoi(value)
+	case bool:
+		_val, err = strconv.ParseBool(value)
+	default:
+		val = nil
+		return
+	}
+
+	if err != nil {
+		val = def
+		return
+	}
+
+	val = _val
+
 	return
 }
 
-func StrToBool(value string, def ...bool) (val bool) {
+func StrToInt(value string, def ...int) int {
 
-	if value == "" {
-		if len(def) > 0 {
-			return def[0]
-		}
-
-		val = false
-		return
+	_def := 0
+	if len(def) > 0 {
+		_def = def[0]
 	}
 
-	val, _ = strconv.ParseBool(value)
-	return
+	return StrTo(value, _def).(int)
+}
+
+func StrToBool(value string, def ...bool) bool {
+
+	_def := false
+
+	if len(def) > 0 {
+		_def = def[0]
+	}
+
+	return StrTo(value, _def).(bool)
 }
