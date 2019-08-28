@@ -10,11 +10,21 @@ func TestStrToInt(t *testing.T) {
 	fmt.Println(val)
 }
 
-func TestStrToVal(t *testing.T) {
-	val := StrTo("10a", 1)
-	val2 := StrTo("1", true)
-	val3 := StrTo("false", true)
-	val4 := StrTo("xx", true)
+type A struct {
+	Name string
+}
 
-	fmt.Println(val, val2, val3, val4)
+func TestStrToVal(t *testing.T) {
+
+	ms := map[string]A{"aa": {Name: "N"}}
+
+	fmt.Println("aa", ms, ms["aaaa"].Name)
+
+	//
+	// val := StrTo("10a", 1)
+	// val2 := StrTo("1", true)
+	// val3 := StrTo("false", true)
+	// val4 := StrTo("xx", true)
+	//
+	// fmt.Println(val, val2, val3, val4)
 }

@@ -7,7 +7,7 @@ import (
 )
 
 func TestLog(t *testing.T) {
-	jsonResp := NewJSONResponse()
+	jsonResp := NewGJSONRender()
 	log.Infoln(jsonResp.genErrorJSON("aa", -1, true))
 	log.Infoln(jsonResp.genSuccessJSON(123, 1, "succeed"))
 }
