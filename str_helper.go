@@ -4,6 +4,12 @@ import (
 	"strconv"
 )
 
+type GStr string
+
+func (s GStr) To(def interface{}) (val interface{}) {
+	return StrTo(string(s), def)
+}
+
 func StrTo(value string, def interface{}) (val interface{}) {
 
 	if value == "" {
