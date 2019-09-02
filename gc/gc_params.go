@@ -1,4 +1,4 @@
-package g
+package gc
 
 import (
 	"github.com/872409/gatom"

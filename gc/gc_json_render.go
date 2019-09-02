@@ -1,4 +1,4 @@
-package g
+package gc
 
 func (g *gContent) JsonSuccess(data interface{}, msg ...string) {
 	g.JsonSuccessWithCode(data, 1, msg...)

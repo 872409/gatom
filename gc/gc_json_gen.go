@@ -1,10 +1,11 @@
-package g
+package gc
 
 import "github.com/872409/gatom"
 
 var DefaultGJSONGenerator = NewGJSONGenerator()
 
 func NewGJSONGenerator() *GJSONGenerator {
+
 	return &GJSONGenerator{
 		CodeName:        "code",
 		MsgName:         "msg",
