@@ -13,6 +13,7 @@ type gContent struct {
 	jsonGenerator *GJSONGenerator
 }
 
-func (g *gContent) SetJSONGen(jsonGenerator *GJSONGenerator) {
+func (g *gContent) SetJSONGen(jsonGenerator *GJSONGenerator) *gContent {
 	g.jsonGenerator = jsonGenerator
+	return g
 }

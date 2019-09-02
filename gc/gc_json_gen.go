@@ -34,7 +34,7 @@ func (j *GJSONGenerator) GenJSON(code int, msg string, data interface{}) gatom.J
 	return json
 }
 
-func (j *GJSONGenerator) genSuccessJSON(data interface{}, code int, msg ...string) interface{} {
+func (j *GJSONGenerator) GenSuccessJSON(data interface{}, code int, msg ...string) interface{} {
 	var _msg = "ok"
 
 	if len(msg) > 0 {
@@ -44,7 +44,7 @@ func (j *GJSONGenerator) genSuccessJSON(data interface{}, code int, msg ...strin
 	return j.GenJSON(code, _msg, data)
 }
 
-func (j *GJSONGenerator) genErrorJSON(msg string, code int, data ...interface{}) interface{} {
+func (j *GJSONGenerator) GenErrorJSON(msg string, code int, data ...interface{}) interface{} {
 	var _data interface{}
 
 	if len(data) > 0 {
