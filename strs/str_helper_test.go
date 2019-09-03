@@ -1,4 +1,4 @@
-package gatom
+package strs
 
 import (
 	"fmt"
