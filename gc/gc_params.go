@@ -28,10 +28,10 @@ func (g *gContent) ParamBoolean(name string, def ...bool) (val bool) {
 	return
 }
 
-func (g *gContent) BindJSONWithError(obj interface{}, error string, code int) (val bool) {
+func (g *gContent) BindJSONWithError(obj interface{}, error string, code int) (bool, error) {
 	if err := g.ShouldBindJSON(obj); err != nil {
 		g.JSONErrorWithCode(error, code)
-		return
+		return false, err
 	}
-	return
+	return true, nil
 }
