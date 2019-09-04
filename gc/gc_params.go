@@ -28,9 +28,9 @@ func (g *gContent) ParamBoolean(name string, def ...bool) (val bool) {
 	return
 }
 
-func (g *gContent) BindJSONWithError(obj interface{}, error string, code int) (bool, error) {
+func (g *gContent) BindJSONWithError(obj interface{}, code int) (bool, error) {
 	if err := g.ShouldBindJSON(obj); err != nil {
-		g.JSONErrorWithCode(error, code)
+		g.JSONErrorWithCode(code)
 		return false, err
 	}
 	return true, nil
