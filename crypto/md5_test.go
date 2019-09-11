@@ -7,6 +7,6 @@ import (
 
 func TestStrMD5(t *testing.T) {
 	str := "dddd.cn"
-	cryptoStr := StrMD5(str)
+	cryptoStr := MD5(str)
 	fmt.Println(cryptoStr)
 }

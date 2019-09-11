@@ -1,6 +1,8 @@
 package gc
 
-import "github.com/872409/gatom"
+import (
+	"github.com/872409/gatom/util"
+)
 
 var DefaultGJSONGenerator = NewGJSONGenerator()
 
@@ -21,8 +23,8 @@ type GJSONGenerator struct {
 	ErrorStatusCode int
 }
 
-func (j *GJSONGenerator) GenJSON(code int, msg string, data interface{}) gatom.JSON {
-	json := gatom.JSON{
+func (j *GJSONGenerator) GenJSON(code int, msg string, data interface{}) util.JSON {
+	json := util.JSON{
 		j.CodeName: code,
 		j.MsgName:  msg,
 	}

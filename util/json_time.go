@@ -1,4 +1,4 @@
-package gatom
+package util
 
 import (
 	"database/sql/driver"
