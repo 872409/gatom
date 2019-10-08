@@ -9,6 +9,12 @@ type RetryStop struct {
 	error
 }
 
+func GoRetry(attempts int, sleep time.Duration, f func() error) {
+	Go(func() {
+		_ = Retry(attempts, sleep, f)
+	})
+}
+
 func Retry(attempts int, sleep time.Duration, f func() error) error {
 	if err := f(); err != nil {
 		if s, ok := err.(RetryStop); ok {

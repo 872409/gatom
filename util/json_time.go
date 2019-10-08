@@ -16,6 +16,15 @@ func (t JSONTime) MarshalJSON() ([]byte, error) {
 	return []byte(formatted), nil
 }
 
+func (t JSONTime) FormatDate() string {
+	unix := t.Unix()
+	if unix < 0 {
+		return ""
+	}
+	formatted := fmt.Sprintf("%s", t.Format("2006-01-02"))
+	return formatted
+}
+
 // Value insert timestamp into mysql need this function.
 func (t JSONTime) Value() (driver.Value, error) {
 	var zeroTime time.Time
