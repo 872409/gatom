@@ -5,18 +5,20 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/gin-gonic/gin/binding"
 	"gopkg.in/go-playground/validator.v8"
+
 
 	"github.com/872409/gatom/util"
 )
 
-func (g *gContent) PostInt(name string, def ...int) (val int) {
+func (g *GContext) PostInt(name string, def ...int) (val int) {
 	_val, _ := g.GetPostForm(name)
 	val = util.StrToInt(_val, def...)
 	return
 }
 
-func (g *gContent) PostInt64(name string, def ...int) (val int64, err error) {
+func (g *GContext) PostInt64(name string, def ...int) (val int64, err error) {
 	_val, exists := g.GetPostForm(name)
 	if !exists {
 		return 0, errors.New("not exists")
@@ -31,13 +33,13 @@ func (g *gContent) PostInt64(name string, def ...int) (val int64, err error) {
 	return val, nil
 }
 
-func (g *gContent) ParamInt(name string, def ...int) (val int) {
+func (g *GContext) ParamInt(name string, def ...int) (val int) {
 	_val := g.Params.ByName(name)
 	val = util.StrToInt(_val, def...)
 	return
 }
 
-func (g *gContent) QueryBool(name string, def ...bool) (val bool) {
+func (g *GContext) QueryBool(name string, def ...bool) (val bool) {
 	_val, exists := g.GetQuery(name)
 
 	if !exists {
@@ -51,12 +53,12 @@ func (g *gContent) QueryBool(name string, def ...bool) (val bool) {
 	return
 }
 
-func (g *gContent) QueryInt(name string, def ...int) (val int) {
+func (g *GContext) QueryInt(name string, def ...int) (val int) {
 	_val := g.Query(name)
 	val = util.StrToInt(_val, def...)
 	return
 }
-func (g *gContent) QueryInt64(name string) (val int64, err error) {
+func (g *GContext) QueryInt64(name string) (val int64, err error) {
 	_val, exists := g.GetQuery(name)
 
 	if exists {
@@ -71,14 +73,32 @@ func (g *gContent) QueryInt64(name string) (val int64, err error) {
 	return 0, errors.New("not exits")
 }
 
-func (g *gContent) ParamBoolean(name string, def ...bool) (val bool) {
+func (g *GContext) ParamBoolean(name string, def ...bool) (val bool) {
 	_val := g.Params.ByName(name)
 	val = util.StrToBool(_val, def...)
 	return
 }
 
-func (g *gContent) BindJSONWithError(obj interface{}) (returnErr error) {
-	if bindErr := g.ShouldBindJSON(obj); bindErr != nil {
+func (g *GContext) BindJSONWithError(obj interface{}) (returnErr error) {
+	if bindErr := g.ShouldBindBodyWith(obj,binding.JSON); bindErr != nil {
+
+		for _, e := range bindErr.(validator.ValidationErrors) {
+			// fmt.Println("err", k, e.Field, e.Tag, e.Value)
+			code, err := strconv.Atoi(e.Name)
+			if err != nil {
+				code = 1001
+			}
+			g.JSONErrorWithCodeMsg(code, e.Tag)
+			return errors.New(e.Tag)
+		}
+
+		return bindErr
+	}
+	return nil
+}
+
+func (g *GContext) BindQueryWithError(obj interface{}) (returnErr error) {
+	if bindErr := g.ShouldBindQuery(obj); bindErr != nil {
 
 		for _, e := range bindErr.(validator.ValidationErrors) {
 			// fmt.Println("err", k, e.Field, e.Tag, e.Value)

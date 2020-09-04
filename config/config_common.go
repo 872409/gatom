@@ -1,7 +1,8 @@
 package config
 
 type AppConfig struct {
-	Debug bool
+	Debug   bool
+	AppName string
 }
 
 func (a *AppConfig) IsReleaseMode() bool {
