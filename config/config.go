@@ -1,14 +1,13 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
 
 type Loader struct {
 	Viper *viper.Viper
+	Error error
 }
 
 func NewLoader() *Loader {
@@ -22,12 +21,11 @@ func (l *Loader) LoadFile(path string) *Loader {
 }
 
 func (l *Loader) Unmarshal(conf interface{}) *Loader {
-	if err := l.Viper.ReadInConfig(); err != nil {
-		_ = fmt.Errorf("%s", err)
+	l.Error = l.Viper.ReadInConfig()
+	if l.Error != nil {
+		return l
 	}
-	if err := l.Viper.Unmarshal(conf); err != nil {
-		_ = fmt.Errorf("%s", err)
-	}
+	l.Error = l.Viper.Unmarshal(conf)
 	return l
 }
 
