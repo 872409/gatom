@@ -32,10 +32,10 @@ type ContainerOption struct {
 }
 
 func NewContainer() *Container {
-	bootstrap := &Container{
-		servers: []Server{},
+
+	return &Container{
+		servers: []ContainerServer{},
 	}
-	return bootstrap
 }
 
 type Container struct {
@@ -49,7 +49,7 @@ type Container struct {
 	OnBeforeBoot func()
 	OnBoot       func()
 	OnDestroy    func(sig os.Signal, exit bool)
-	servers      []Server
+	servers      []ContainerServer
 }
 
 func (b *Container) InitFromFlag(optionType IContainerOption) {
@@ -76,18 +76,18 @@ func (b *Container) Init(option IContainerOption) {
 
 	b.initOnce.Do(func() {
 		b.option = option
-		b.serverInit()
+		b.loadServers()
 		b.initialized = true
 	})
 }
 
-func (b *Container) serverInit() {
+func (b *Container) loadServers() {
 	for _, server := range b.servers {
-		server.ServerInit(b)
+		server.ServerLoad(b)
 	}
 }
 
-func (b *Container) AddServer(server Server) {
+func (b *Container) AddServer(server ContainerServer) {
 	b.servers = append(b.servers, server)
 }
 

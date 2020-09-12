@@ -1,8 +1,8 @@
 package gapp
 
-type Server interface {
+type ContainerServer interface {
 	GetServerName() string
-	ServerInit(bootstrap *Container)
+	ServerLoad(bootstrap *Container)
 	ServerBoot(bootstrap *Container)
 	ServerDestroy(bootstrap *Container)
 }

@@ -10,24 +10,25 @@ import (
 
 	"github.com/872409/gatom/log"
 )
+
 type HTTPServerOption struct {
 	DebugMode string
 	Addr      string
 }
 
 func NewGoHTTPServer(option HTTPServerOption) *GoHTTPServer {
-	return &GoHTTPServer{option: option}
+	return &GoHTTPServer{option: option, graceHttp: gracehttp.NewGraceHTTP()}
 }
 
 type GoHTTPServer struct {
-	graceHttp  gracehttp.GraceHTTP
+	graceHttp  *gracehttp.GraceHTTP
 	option     HTTPServerOption
 	httpServer *http.Server
 	GinEngine  *gin.Engine
 	OnInit     func(http *GoHTTPServer)
 }
 
-func (receiver *GoHTTPServer) Boot() {
+func (receiver *GoHTTPServer) Init() {
 	debugMode := receiver.option.DebugMode == gin.DebugMode
 
 	log.Infof("HttpServer boot : %s debugMode:%s\r\n", receiver.option.Addr, receiver.option.DebugMode)
@@ -39,7 +40,15 @@ func (receiver *GoHTTPServer) Boot() {
 	}
 
 	receiver.GinEngine = gin.Default()
+	if receiver.OnInit == nil {
+		panic("receiver OnInit is nil")
+	}
 	receiver.OnInit(receiver)
+
+}
+
+func (receiver *GoHTTPServer) Boot() {
+	debugMode := receiver.option.DebugMode == gin.DebugMode
 
 	if debugMode {
 		receiver.runDebug()

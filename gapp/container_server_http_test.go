@@ -1,7 +1,6 @@
 package gapp
 
 import (
-	"os"
 	"testing"
 
 	"github.com/872409/gatom/log"
@@ -12,7 +11,7 @@ type TestConfigs struct {
 	Http   HTTPServerOption
 }
 
-func (t TestConfigs) GetHttpConfig() HTTPServerOption {
+func (t TestConfigs) GetHTTPServerOption() HTTPServerOption {
 	return t.Http
 }
 func (t TestConfigs) GetContainerOption() ContainerOption {
@@ -26,13 +25,13 @@ func TestApplication_AddServer(t *testing.T) {
 		Http:   HTTPServerOption{DebugMode: "debug", Addr: ":7000"},
 	}
 
-	httpApp := NewHttp()
-	httpApp.OnHttpInit = func(httpSvr *GoHTTPServer) {
-		log.Infoln("App.OnHttpInit")
+	httpApp := NewHTTP()
+	httpApp.OnInit = func(httpSvr *GoHTTPServer) {
+		log.Infoln("App.OnInit")
 		// rest.LoadRouters(httpSvr.GinEngine)
 	}
 
-	httpApp.Container.OnDestroy = func(sig os.Signal, exit bool) {
+	httpApp.OnDestroy = func() {
 		log.Infoln("App", httpApp.Container.option)
 	}
 
