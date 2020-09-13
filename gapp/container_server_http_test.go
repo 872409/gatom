@@ -25,15 +25,12 @@ func TestApplication_AddServer(t *testing.T) {
 		Http:   HTTPServerOption{DebugMode: "debug", Addr: ":7000"},
 	}
 
-	httpApp := NewHTTP()
-	httpApp.OnInit = func(httpSvr *GoHTTPServer) {
-		log.Infoln("App.OnInit")
-		// rest.LoadRouters(httpSvr.GinEngine)
-	}
-
-	httpApp.OnDestroy = func() {
-		log.Infoln("App", httpApp.Container.option)
-	}
-
-	httpApp.BootWithOption(appConfig)
+	NewHTTP().
+		OnInit(func(httpSvr *HTTPServer) {
+			log.Infoln("App.OnInit")
+		}).
+		OnDestroy(func(httpSvr *HTTPServer) {
+			log.Infoln("App", httpSvr.Container.option)
+		}).
+		BootWithOption(appConfig)
 }

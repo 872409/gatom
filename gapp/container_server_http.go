@@ -16,15 +16,27 @@ func NewHTTP() *HTTPServer {
 	return http
 }
 
+type HTTPServerHandleFun func(httpSvr *HTTPServer)
+
 type HTTPServer struct {
-	Container  *Container
-	HTTPServer *GoHTTPServer
-	OnInit     func(httpSvr *GoHTTPServer)
-	OnDestroy  func()
+	Container    *Container
+	HTTPServer   *GoHTTPServer
+	onInitFun    HTTPServerHandleFun
+	onDestroyFun HTTPServerHandleFun
 }
 
 func (receiver *HTTPServer) GetServerName() string {
 	return "http"
+}
+
+func (receiver *HTTPServer) OnInit(onInitFun HTTPServerHandleFun) *HTTPServer {
+	receiver.onInitFun = onInitFun
+	return receiver
+}
+
+func (receiver *HTTPServer) OnDestroy(onDestroyFun HTTPServerHandleFun) *HTTPServer {
+	receiver.onDestroyFun = onDestroyFun
+	return receiver
 }
 
 func (receiver *HTTPServer) ServerBoot(bootstrap *Container) {
@@ -34,14 +46,15 @@ func (receiver *HTTPServer) ServerBoot(bootstrap *Container) {
 func (receiver *HTTPServer) ServerDestroy(bootstrap *Container) {
 	receiver.HTTPServer.Stop()
 
-	if receiver.OnDestroy != nil {
-		receiver.OnDestroy()
+	if receiver.onDestroyFun != nil {
+		receiver.onDestroyFun(receiver)
 	}
 }
 
-func (receiver *HTTPServer) BootWithOption(option IHTTPOption) {
+func (receiver *HTTPServer) BootWithOption(option IHTTPOption) *HTTPServer {
 	log.Infoln("HTTPServer.Boot")
 	receiver.Container.InitAndBoot(option)
+	return receiver
 }
 
 //
@@ -54,7 +67,9 @@ func (receiver *HTTPServer) ServerLoad(container *Container) {
 	log.Infoln("HTTPServer.ServerLoad", container.option)
 	option := container.GetOption().(IHTTPOption)
 	httpServer := NewGoHTTPServer(option.GetHTTPServerOption())
-	httpServer.OnInit = receiver.OnInit
+	httpServer.OnInit = func(http *GoHTTPServer) {
+		receiver.onInitFun(receiver)
+	}
 	httpServer.Init()
 	receiver.HTTPServer = httpServer
 }

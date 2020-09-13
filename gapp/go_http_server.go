@@ -11,6 +11,8 @@ import (
 	"github.com/872409/gatom/log"
 )
 
+type GoHTTPServerHandleFun func(receiver *GoHTTPServer)
+
 type HTTPServerOption struct {
 	DebugMode string
 	Addr      string
@@ -45,6 +47,10 @@ func (receiver *GoHTTPServer) Init() {
 	}
 	receiver.OnInit(receiver)
 
+}
+
+func (receiver *GoHTTPServer) Mount(fn func(routerGroup *gin.RouterGroup)) {
+	fn(&receiver.GinEngine.RouterGroup)
 }
 
 func (receiver *GoHTTPServer) Boot() {
