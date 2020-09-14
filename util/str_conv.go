@@ -25,8 +25,16 @@ func StrTo(value string, def interface{}) (val interface{}) {
 	switch def.(type) {
 	case int:
 		_val, err = strconv.Atoi(value)
+		break
 	case bool:
 		_val, err = strconv.ParseBool(value)
+		break
+	case float32:
+		_val, err = strconv.ParseFloat(value, 32)
+		break
+	case float64:
+		_val, err = strconv.ParseFloat(value, 64)
+		break
 	default:
 		val = nil
 		return
@@ -50,6 +58,22 @@ func StrToInt(value string, def ...int) int {
 	}
 
 	return StrTo(value, _def).(int)
+}
+
+func StrToFloat32(value string, def float32) float32 {
+	_val, err := strconv.ParseFloat(value, 32)
+	if err != nil {
+		return def
+	}
+	return float32(_val)
+}
+
+func StrToFloat64(value string, def float64) float64 {
+	_val, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		return def
+	}
+	return _val
 }
 
 func StrToBool(value string, def ...bool) bool {

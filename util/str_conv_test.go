@@ -15,6 +15,7 @@ func IsMobileNum(mobileNum string) bool {
 	reg := regexp.MustCompile(regular)
 	return reg.MatchString(mobileNum)
 }
+
 func TestStrToInt(t *testing.T) {
 
 	s := GStr("1").To(false)
@@ -23,6 +24,10 @@ func TestStrToInt(t *testing.T) {
 	fmt.Println(s, s2, s3)
 
 	val := StrToInt("a", 2)
+	fmt.Println(val)
+}
+func TestStrToFloat(t *testing.T) {
+	val := StrToFloat32("1.001", float32(0))
 	fmt.Println(val)
 }
 

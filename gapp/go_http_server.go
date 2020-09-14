@@ -49,8 +49,9 @@ func (receiver *GoHTTPServer) Init() {
 
 }
 
-func (receiver *GoHTTPServer) Mount(fn func(routerGroup *gin.RouterGroup)) {
-	fn(&receiver.GinEngine.RouterGroup)
+func (receiver *GoHTTPServer) Mount(fn func(routerGroup gin.RouterGroup)) {
+	routGroup:=receiver.GinEngine.RouterGroup
+	fn(routGroup)
 }
 
 func (receiver *GoHTTPServer) Boot() {

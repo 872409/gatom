@@ -66,10 +66,12 @@ func (receiver *HTTPServer) BootWithOption(option IHTTPOption) *HTTPServer {
 func (receiver *HTTPServer) ServerLoad(container *Container) {
 	log.Infoln("HTTPServer.ServerLoad", container.option)
 	option := container.GetOption().(IHTTPOption)
-	httpServer := NewGoHTTPServer(option.GetHTTPServerOption())
-	httpServer.OnInit = func(http *GoHTTPServer) {
+
+	receiver.HTTPServer = NewGoHTTPServer(option.GetHTTPServerOption())
+	receiver.HTTPServer.OnInit = func(http *GoHTTPServer) {
 		receiver.onInitFun(receiver)
 	}
-	httpServer.Init()
-	receiver.HTTPServer = httpServer
+
+	receiver.HTTPServer.Init()
+
 }
