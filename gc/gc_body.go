@@ -8,7 +8,7 @@ import (
 )
 
 func (g *GContext) GetBodyString() string {
-	buf := make([]byte, 1024)
+	buf := make([]byte, g.Request.ContentLength)
 	num, _ := g.Request.Body.Read(buf)
 	reqBody := string(buf[0:num])
 	log.Infoln("GetBodyString:" + reqBody)

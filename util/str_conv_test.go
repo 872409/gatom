@@ -30,6 +30,15 @@ func TestStrToFloat(t *testing.T) {
 	val := StrToFloat32("1.001", float32(0))
 	fmt.Println(val)
 }
+func TestStrToFloat2(t *testing.T) {
+	val := "POINT(108.9498712 34.2588125935)"
+	fmt.Println(val[strings.Index(val, "(")+1 : len(val)-1])
+	val = strings.TrimPrefix(val, ")")
+	val = strings.TrimPrefix(val, "POINT(")
+	fmt.Println(val)
+	values := strings.Split(val, " ")
+	fmt.Println(values)
+}
 
 type A struct {
 	Name string

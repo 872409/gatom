@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/gin-gonic/gin/binding"
 	"gopkg.in/go-playground/validator.v8"
-
 
 	"github.com/872409/gatom/util"
 )
@@ -78,9 +76,34 @@ func (g *GContext) ParamBoolean(name string, def ...bool) (val bool) {
 	val = util.StrToBool(_val, def...)
 	return
 }
+//
+// func (g *GContext) BindJSONWithError(obj interface{}) (returnErr error) {
+//
+// 	// body := g.GetBodyString()
+// 	// returnErr = json.Unmarshal([]byte(body), obj)
+//
+// 	if bindErr := BindGCJSONBody(g, obj); bindErr != nil {
+//
+// 		for _, e := range bindErr.(validator.ValidationErrors) {
+// 			// fmt.Println("err", k, e.Field, e.Tag, e.Value)
+// 			code, err := strconv.Atoi(e.Name)
+// 			if err != nil {
+// 				code = 1001
+// 			}
+// 			g.JSONErrorWithCodeMsg(code, e.Tag)
+// 			return errors.New(e.Tag)
+// 		}
+//
+// 		return bindErr
+// 	}
+// 	return
+//
+// 	// return
+// }
+
 
 func (g *GContext) BindJSONWithError(obj interface{}) (returnErr error) {
-	if bindErr := g.ShouldBindBodyWith(obj,binding.JSON); bindErr != nil {
+	if bindErr := g.ShouldBindBodyWith(obj, GCBindingJSON); bindErr != nil {
 
 		for _, e := range bindErr.(validator.ValidationErrors) {
 			// fmt.Println("err", k, e.Field, e.Tag, e.Value)
