@@ -5,13 +5,30 @@ import (
 	"reflect"
 	"runtime"
 	"sync"
+
+	"github.com/872409/gatom/log"
 )
+
+func NewMessage(topic string, payload interface{}) *Message {
+	return &Message{Topic: topic, Payload: payload}
+}
+
+type Message struct {
+	Topic   string
+	Payload interface{}
+}
+
+type messageCallback func(msg *Message)
 
 // MessageBus implements publish/subscribe messaging paradigm
 type MessageBus interface {
 	// Publish publishes arguments to the given topic subscribers
 	// Publish block only when the buffer of one of the subscribers is full.
 	Publish(topic string, arg interface{})
+
+	PublishMessageTopic(topic string, payload interface{})
+	PublishMessage(message *Message)
+	SubscribeMessage(topic string, fn messageCallback) unsubscribe
 	// Close unsubscribe all handlers from given topic
 	Close(topic string)
 	// Subscribe subscribes to the given topic
@@ -21,6 +38,7 @@ type MessageBus interface {
 }
 
 type callback func(interface{})
+type unsubscribe func() error
 
 type handlersMap map[string][]*handler
 
@@ -36,6 +54,14 @@ type messageBus struct {
 	handlers         handlersMap
 }
 
+func (b *messageBus) PublishMessageTopic(topic string, payload interface{}) {
+	b.PublishMessage(NewMessage(topic, payload))
+}
+
+func (b *messageBus) PublishMessage(msg *Message) {
+	b.Publish(msg.Topic, msg)
+}
+
 func (b *messageBus) Publish(topic string, arg interface{}) {
 	b.mtx.RLock()
 	defer b.mtx.RUnlock()
@@ -47,6 +73,18 @@ func (b *messageBus) Publish(topic string, arg interface{}) {
 	}
 }
 
+func (b *messageBus) SubscribeMessage(topic string, fn messageCallback) unsubscribe {
+	cb := func(i interface{}) {
+		msg := i.(*Message)
+		fn(msg)
+	}
+	b.Subscribe(topic, cb)
+
+	return func() error {
+		return b.Unsubscribe(topic, cb)
+	}
+}
+
 func (b *messageBus) Subscribe(topic string, fn callback) {
 	h := &handler{
 		callback: fn,
@@ -54,9 +92,18 @@ func (b *messageBus) Subscribe(topic string, fn callback) {
 		queue:    make(chan interface{}, b.handlerQueueSize),
 	}
 
+	invokeHandlerCallback := func(h *handler, arg interface{}) {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorln(fmt.Sprintf("MessageBus.Subscribe.invokeHandlerCallback:%s", r))
+			}
+		}()
+		h.callback(arg)
+	}
+
 	go func() {
 		for arg := range h.queue {
-			h.callback(arg)
+			invokeHandlerCallback(h, arg)
 		}
 	}()
 

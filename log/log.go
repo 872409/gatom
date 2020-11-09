@@ -4,7 +4,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const DefaultFilePath = "logs/app"
 
 type Level = logrus.Level
 
@@ -54,20 +53,9 @@ type Log struct {
 	Name string
 }
 
-func (l *Log) SaveToFile(filePath ...string) *Log {
-	var _filePath string
+func (l *Log) SaveToFile(dir string, fileName string) *Log {
 
-	if len(filePath) == 0 {
-		_filePath = DefaultFilePath
-	} else {
-		_filePath = filePath[0]
-
-		if len(_filePath) == 0 {
-			_filePath = DefaultFilePath
-		}
-	}
-
-	toFile(l.Logger, _filePath)
+	toFile(l.Logger, dir, fileName)
 
 	return l
 }

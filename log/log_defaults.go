@@ -9,8 +9,17 @@ func Default() *Log {
 func SetLevel(level Level) {
 	defaultLog.SetLevel(level)
 }
-func SaveToFile(filePath ...string) {
-	defaultLog.SaveToFile(filePath...)
+
+func SaveToFile(dir string, fileName string) {
+	defaultLog.SaveToFile(dir, fileName)
+}
+
+func SaveToFileDefault(fileName ...string) {
+	_fileName := "app"
+	if len(fileName) > 0 {
+		_fileName = fileName[0]
+	}
+	defaultLog.SaveToFile("log", _fileName)
 }
 
 func SetDefault(l *Log) {

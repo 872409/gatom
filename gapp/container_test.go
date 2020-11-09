@@ -8,17 +8,17 @@ import (
 )
 
 type ContainerConfig struct {
-	Option ContainerOption
+	Option *ContainerOption
 }
 
-func (t ContainerConfig) GetContainerOption() ContainerOption {
+func (t ContainerConfig) GetContainerOption() *ContainerOption {
 	return t.Option
 }
 
 func TestNewBootstrap(t *testing.T) {
 
 	appConfig := &ContainerConfig{
-		Option: ContainerOption{Name: "Test", Debug: true, EnableSignal: true, EnablePID: false},
+		Option: &ContainerOption{Name: "Test", Debug: true, EnableSignal: true, EnablePID: false},
 	}
 
 	container := NewContainer()

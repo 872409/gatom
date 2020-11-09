@@ -7,21 +7,21 @@ import (
 )
 
 type TestConfigs struct {
-	Option ContainerOption
+	Option *ContainerOption
 	Http   HTTPServerOption
 }
 
 func (t TestConfigs) GetHTTPServerOption() HTTPServerOption {
 	return t.Http
 }
-func (t TestConfigs) GetContainerOption() ContainerOption {
+func (t TestConfigs) GetContainerOption() *ContainerOption {
 	return t.Option
 }
 
 func TestApplication_AddServer(t *testing.T) {
 
 	appConfig := &TestConfigs{
-		Option: ContainerOption{Name: "Test", Debug: true, EnableSignal: true, EnablePID: false},
+		Option: &ContainerOption{Name: "Test", Debug: true, EnableSignal: true, EnablePID: false},
 		Http:   HTTPServerOption{DebugMode: "debug", Addr: ":7000"},
 	}
 

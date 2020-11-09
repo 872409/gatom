@@ -6,7 +6,7 @@ import (
 
 type IHTTPOption interface {
 	IContainerOption
-	GetHTTPServerOption() HTTPServerOption
+	GetHTTPServerOption() *HTTPServerOption
 }
 
 func NewHTTP() *HTTPServer {
@@ -50,19 +50,14 @@ func (receiver *HTTPServer) ServerDestroy(bootstrap *Container) {
 		receiver.onDestroyFun(receiver)
 	}
 }
-
+// BootWithOption
 func (receiver *HTTPServer) BootWithOption(option IHTTPOption) *HTTPServer {
 	log.Infoln("HTTPServer.Boot")
 	receiver.Container.InitAndBoot(option)
 	return receiver
 }
 
-//
-// func (receiver *HTTPServer) BootWithFlagOption(optionType IHttpApplicationConfig) {
-// 	log.Infoln("HTTPServer.BootWithFlagOption")
-// 	receiver.Container.InitFromFlagAndBoot(optionType)
-// }
-
+// ServerLoad
 func (receiver *HTTPServer) ServerLoad(container *Container) {
 	log.Infoln("HTTPServer.ServerLoad", container.option)
 	option := container.GetOption().(IHTTPOption)

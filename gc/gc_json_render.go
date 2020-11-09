@@ -6,6 +6,14 @@ func (g *GContext) JSONSuccess(data interface{}, msg ...string) {
 	g.JSONSuccessWithCode(data, 1, msg...)
 }
 
+func (g *GContext) JSON(succeeResponse interface{}, err error) {
+	if err != nil {
+		g.JSONCodeError(err)
+	} else {
+		g.JSONSuccess(succeeResponse)
+	}
+}
+
 func (g *GContext) JSONSuccessWithCode(data interface{}, code int, msg ...string) {
 	g.AbortWithStatusJSON(200, g.jsonGenerator.GenSuccessJSON(data, code, msg...))
 }

@@ -60,6 +60,23 @@ func StrToInt(value string, def ...int) int {
 	return StrTo(value, _def).(int)
 }
 
+func StrToInt64(value string, def int64) int64 {
+	_val, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		return def
+	}
+	return _val
+}
+
+func StrArrayToInt64(value []string) []int64 {
+	int64Array := make([]int64, 0, len(value))
+	for index, val := range value {
+		_val, _ := strconv.ParseInt(val, 10, 64)
+		int64Array[index] = _val
+	}
+	return int64Array
+}
+
 func StrToFloat32(value string, def float32) float32 {
 	_val, err := strconv.ParseFloat(value, 32)
 	if err != nil {

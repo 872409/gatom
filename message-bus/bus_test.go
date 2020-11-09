@@ -11,28 +11,34 @@ func TestPublish(t *testing.T) {
 
 	// var wg sync.WaitGroup
 	// wg.Add(2)
-	bus.Publish("topic", true)
 
 	first := false
-	second := false
+	// second := false
 
 	bus.Subscribe("topic", func(v interface{}) {
 		// defer wg.Done()
-		first = v.(bool)
-		t.Logf("first:%b", v)
+		first := v.(string)
+		t.Logf("first:%v", first)
 	})
 
-	bus.Subscribe("topic", func(v interface{}) {
-		// defer wg.Done()
-		second = v.(bool)
-		t.Logf("second:%b", v)
-	})
-
-
+	// bus.SubscribeMessage("topic2", func(msg *Message) {
+	// 	t.Logf("SubscribeMessage:%v", msg)
+	// })
+	//
+	// bus.Subscribe("topic", func(v interface{}) {
+	// 	// defer wg.Done()
+	// 	second = v.(bool)
+	// 	t.Logf("second:%b", v)
+	// })
+	//
+	bus.Publish("topic", true)
+	// bus.PublishMessage(&Message{Topic: "topic2", Payload: "vvvvvvv"})
+	//
 	time.Sleep(10 * time.Second)
-	// wg.Wait()
-
-	if first == false || second == false {
-		t.Fail()
-	}
+	t.Logf("second:%v", first)
+	// // wg.Wait()
+	//
+	// if first == false || second == false {
+	// 	t.Fail()
+	// }
 }

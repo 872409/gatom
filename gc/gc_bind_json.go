@@ -38,8 +38,8 @@ func decodeJSON(r io.Reader, obj interface{}) error {
 	if binding.EnableDecoderUseNumber {
 		decoder.UseNumber()
 	}
-	// if binding.EnableDecoderDisallowUnknownFields {
-	decoder.DisallowUnknownFields()
+	// if binding. {
+	// decoder.DisallowUnknownFields()
 	// }
 	if err := decoder.Decode(obj); err != nil {
 		return err

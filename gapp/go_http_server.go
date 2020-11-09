@@ -18,13 +18,13 @@ type HTTPServerOption struct {
 	Addr      string
 }
 
-func NewGoHTTPServer(option HTTPServerOption) *GoHTTPServer {
+func NewGoHTTPServer(option *HTTPServerOption) *GoHTTPServer {
 	return &GoHTTPServer{option: option, graceHttp: gracehttp.NewGraceHTTP()}
 }
 
 type GoHTTPServer struct {
 	graceHttp  *gracehttp.GraceHTTP
-	option     HTTPServerOption
+	option     *HTTPServerOption
 	httpServer *http.Server
 	GinEngine  *gin.Engine
 	OnInit     func(http *GoHTTPServer)
@@ -42,6 +42,8 @@ func (receiver *GoHTTPServer) Init() {
 	}
 
 	receiver.GinEngine = gin.Default()
+	receiver.GinEngine.Use(log.LoggerToFile(log.Default().Logger))
+	// receiver.GinEngine.use
 	if receiver.OnInit == nil {
 		panic("receiver OnInit is nil")
 	}
@@ -50,7 +52,7 @@ func (receiver *GoHTTPServer) Init() {
 }
 
 func (receiver *GoHTTPServer) Mount(fn func(routerGroup gin.RouterGroup)) {
-	routGroup:=receiver.GinEngine.RouterGroup
+	routGroup := receiver.GinEngine.RouterGroup
 	fn(routGroup)
 }
 

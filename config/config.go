@@ -1,6 +1,8 @@
 package config
 
 import (
+	"bytes"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
@@ -25,6 +27,27 @@ func (l *Loader) Unmarshal(conf interface{}) *Loader {
 	if l.Error != nil {
 		return l
 	}
+	return l.unmarshal(conf)
+}
+
+func (l *Loader) UnmarshalFromToml(toml string, conf interface{}) *Loader {
+	return l.UnmarshalFromString("toml", toml, conf)
+}
+
+func (l *Loader) UnmarshalFromJSON(json string, conf interface{}) *Loader {
+	return l.UnmarshalFromString("json", json, conf)
+}
+
+func (l *Loader) UnmarshalFromString(configType string, value string, conf interface{}) *Loader {
+	l.Viper.SetConfigType(configType)
+	l.Error = l.Viper.ReadConfig(bytes.NewBuffer([]byte(value)))
+	if l.Error != nil {
+		return l
+	}
+	return l.unmarshal(conf)
+}
+
+func (l *Loader) unmarshal(conf interface{}) *Loader {
 	l.Error = l.Viper.Unmarshal(conf)
 	return l
 }

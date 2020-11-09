@@ -11,12 +11,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func toFile(logger *logrus.Logger, logFilePath string) {
+func toFile(logger *logrus.Logger, dir, logFileName string) {
 
 	// 日志文件
-	fileName := logFilePath // path.Join(logFilePath, logFileName)
+	fileName := logFileName // path.Join(logFilePath, logFileName)
 
-	logFileDir := path.Dir(logFilePath)
+	logFileDir := path.Dir(dir)
 	if _, err := os.Stat(logFileDir); err != nil {
 		err = os.MkdirAll(logFileDir, 0711)
 	}
@@ -30,8 +30,8 @@ func toFile(logger *logrus.Logger, logFilePath string) {
 	// Logger.Out = src
 
 	logWriter, err := rotatelogs.New(
-		fileName+"_%Y%m%d.log",                    // 分割后的文件名称
-		rotatelogs.WithLinkName(fileName),         // 生成软链，指向最新日志文件
+		dir+"/"+fileName+"_%Y%m%d.log",            // 分割后的文件名称
+		rotatelogs.WithLinkName(fileName+".log"),  // 生成软链，指向最新日志文件
 		rotatelogs.WithRotationCount(365),         // 最多存365个文件
 		rotatelogs.WithRotationTime(24*time.Hour), // 设置日志切割时间间隔(1天)
 	)
