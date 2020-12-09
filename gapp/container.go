@@ -188,9 +188,9 @@ func (b *Container) pidFileHandle() {
 	log.Infof("%s run version: '%s' \tdebug:%b \tenablePID:%b enableSignal:%b \tPID:%s \n", option.Name, option.Version, option.Debug, option.EnablePID, option.EnableSignal, pid)
 	log.Infof("gatom version:%s\n", gatom.Version)
 
-	if !option.EnablePID {
-		return
-	}
+	// if !option.EnablePID {
+	// 	return
+	// }
 
 	// err := os.MkdirAll("pids", os.ModePerm)
 

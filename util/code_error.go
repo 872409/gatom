@@ -9,6 +9,14 @@ func NewCodeError(err string, code int) *codeError {
 	return &codeError{errors.New(err), code}
 }
 
+func ConvertCodeError(err error) CodeError {
+	codeErr, ok := err.(CodeError)
+	if ok {
+		return codeErr
+	}
+	return nil
+}
+
 type CodeError interface {
 	error
 	Code() int

@@ -27,3 +27,7 @@ func (g *GContext) SetJSONGen(jsonGenerator *GJSONGenerator) *GContext {
 func (g *GContext) GetP(p string) string {
 	return g.Params.ByName(p)
 }
+
+func (g *GContext) GetUserAgent() string {
+	return g.GetHeader("User-Agent")
+}
