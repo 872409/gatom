@@ -2,7 +2,6 @@ package log
 
 import (
 	"os"
-	"path"
 	"time"
 
 	"github.com/lestrrat-go/file-rotatelogs"
@@ -16,9 +15,9 @@ func toFile(logger *logrus.Logger, dir, logFileName string) {
 	// 日志文件
 	fileName := logFileName // path.Join(logFilePath, logFileName)
 
-	logFileDir := path.Dir(dir)
-	if _, err := os.Stat(logFileDir); err != nil {
-		err = os.MkdirAll(logFileDir, 0711)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		err = os.MkdirAll(dir, 0711)
+
 	}
 
 	// src, err := os.OpenFile(fileName+".txt", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)

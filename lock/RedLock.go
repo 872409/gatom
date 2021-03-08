@@ -6,10 +6,12 @@ import (
 	"github.com/go-redsync/redsync/v4"
 	"github.com/go-redsync/redsync/v4/redis/redigo"
 	redigolib "github.com/gomodule/redigo/redis"
+
+	"github.com/872409/gatom/gredis"
 )
 
 func NewLock(config RedisLockConfig) *RedLock {
-	pool := redigo.NewPool(&redigolib.Pool{
+	pool := &redigolib.Pool{
 		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
 		Dial: func() (redigolib.Conn, error) {
@@ -19,11 +21,22 @@ func NewLock(config RedisLockConfig) *RedLock {
 			_, err := c.Do("PING")
 			return err
 		},
-	})
+	}
 
-	mute := redsync.New(pool)
+	return NewWithPool(pool)
+}
+
+func New(option *gredis.RedisOption) *RedLock {
+	return NewWithPool(gredis.NewRedisPool(option))
+}
+
+func NewWithPool(pool *redigolib.Pool) *RedLock {
+	redigoPool := redigo.NewPool(pool)
+	mute := redsync.New(redigoPool)
 	return &RedLock{syncMutex: mute}
 }
+
+// type Option redsync.Option
 
 type RunFun func() *RunResult
 type RunResult struct {
@@ -31,55 +44,30 @@ type RunResult struct {
 	Error error
 }
 
+func Result(err error, data ...interface{}) *RunResult {
+	result := &RunResult{Error: err}
+	if len(data) == 1 {
+		result.Data = data[0]
+	}
+	return result
+}
+
 type RedLock struct {
 	syncMutex *redsync.Redsync
 }
 
-func (receiver *RedLock) Run(lockName string, fun RunFun) *RunResult {
-	lock := receiver.GetLock(lockName)
+func (receiver *RedLock) Run(lockName string, fun RunFun, opts ...redsync.Option) *RunResult {
+	lock := receiver.GetLock(lockName, opts...)
 	defer lock.Unlock()
 	if err := lock.Lock(); err != nil {
 		return &RunResult{Data: nil, Error: err}
 	}
 	return fun()
 }
-func (receiver *RedLock) GetLock(name string) *redsync.Mutex {
-	return receiver.syncMutex.NewMutex(name)
+func (receiver *RedLock) GetLock(name string, opts ...redsync.Option) *redsync.Mutex {
+	return receiver.syncMutex.NewMutex(name, opts...)
 }
 
 func (receiver *RedLock) GetLockTry(name string, tries int) *redsync.Mutex {
 	return receiver.syncMutex.NewMutex(name, redsync.WithTries(tries))
 }
-
-//
-// func main() {
-// 	server, err := tempredis.Start(tempredis.Config{})
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	defer server.Term()
-//
-// 	pool := redigo.NewPool(&redigolib.Pool{
-// 		MaxIdle:     3,
-// 		IdleTimeout: 240 * time.Second,
-// 		Dial: func() (redigolib.Conn, error) {
-// 			return redigolib.Dial("tcp", server.Socket())
-// 		},
-// 		TestOnBorrow: func(c redigolib.Conn, t time.Time) error {
-// 			_, err := c.Do("PING")
-// 			return err
-// 		},
-// 	})
-//
-// 	rs := redsync.New(pool)
-//
-// 	mutex := rs.NewMutex("test-redsync", redsync.WithDriftFactor(1), redsync.WithExpiry(1))
-//
-// 	if err = mutex.Lock(); err != nil {
-// 		panic(err)
-// 	}
-//
-// 	if _, err = mutex.Unlock(); err != nil {
-// 		panic(err)
-// 	}
-// }

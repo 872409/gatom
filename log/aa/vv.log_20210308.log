@@ -1,0 +1,4 @@
+time="2021-03-08 13:44:21" level=info msg=Test..
+time="2021-03-08 13:44:21" level=debug msg=Dbug
+time="2021-03-08 13:44:21" level=info msg=AAA
+time="2021-03-08 13:44:21" level=warning msg=AAA

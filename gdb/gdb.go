@@ -16,9 +16,9 @@ type DatabaseOption struct {
 	Source string
 }
 
-func GetDatabase(name string, databseOptions IDatabaseOption) *gorm.DB {
+func GetDatabase(name string, databaseOptions IDatabaseOption) *gorm.DB {
 
-	option, found := databseOptions.GetDatabaseOption(name)
+	option, found := databaseOptions.GetDatabaseOption(name)
 
 	if !found {
 		panic("GetDatabase option: " + name + " not found")
@@ -33,6 +33,10 @@ func GetDatabase(name string, databseOptions IDatabaseOption) *gorm.DB {
 }
 
 func NewDatabase(option DatabaseOption) (db *gorm.DB, err error) {
+	return New(option, &gorm.Config{})
+}
+
+func New(option DatabaseOption, config *gorm.Config) (db *gorm.DB, err error) {
 	driver := option.Driver
 	if driver == "" {
 		driver = "mysql"
@@ -40,7 +44,7 @@ func NewDatabase(option DatabaseOption) (db *gorm.DB, err error) {
 
 	switch driver {
 	case "mysql":
-		db, err = gorm.Open(mysql.Open(option.Source), &gorm.Config{})
+		db, err = gorm.Open(mysql.Open(option.Source), config)
 		break
 	}
 

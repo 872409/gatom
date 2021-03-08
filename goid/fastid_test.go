@@ -40,14 +40,14 @@ func TestGenID(t *testing.T) {
 	}
 }
 func TestGenID2(t *testing.T) {
-	g := ConstructConfigWithMachineID(40, 11, 12, 1)
+	g := ConstructConfigWithMachineID(40, 7, 11, 10)
+	g2 := ConstructConfigWithMachineID(40, 7, 12, 10)
 	// g2 := ConstructConfigWithMachineID(40, 11, 12, 2)
 
-	for i := 0; i < 10000000; i++ {
-		g.GenInt64ID()
-		// fmt.Printf("id generated: %v\n", id)
-		// id2 := g2.GenInt64ID()
-		// fmt.Printf("id generated: %v %v\n", id, id2)
+	for i := 0; i < 100; i++ {
+		id := g.GenInt64ID()
+		id2 := g2.GenInt64ID()
+		fmt.Printf("id1:%v\tid2:%v\n", id, id2)
 	}
 }
 func ExampleConfig_recommendedSettings() {
