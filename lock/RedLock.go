@@ -10,7 +10,14 @@ import (
 	"github.com/872409/gatom/gredis"
 )
 
-func NewLock(config RedisLockConfig) *RedLock {
+
+type LockInterface interface {
+	GetLock(name string, opts ...redsync.Option) *redsync.Mutex
+	Run(name string, fun RunFun, opts ...redsync.Option) *RunResult
+	GetLockTry(name string, tries int) *redsync.Mutex
+}
+
+func NewLock(config RedisLockConfig) LockInterface {
 	pool := &redigolib.Pool{
 		MaxIdle:     3,
 		IdleTimeout: 240 * time.Second,
