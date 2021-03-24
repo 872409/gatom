@@ -104,6 +104,7 @@ func (g *GContext) ParamBoolean(name string, def ...bool) (val bool) {
 // }
 
 func (g *GContext) BindJSONWithError(obj interface{}) error {
+
 	if bindErr := g.ShouldBindBodyWith(obj, GCBindingJSON); bindErr != nil {
 		log.Errorln("BindJSONWithError", bindErr)
 		switch bindErr.(type) {
